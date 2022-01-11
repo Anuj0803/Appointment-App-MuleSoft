@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:covid-19data-tracking-api="http://www.mulesoft.org/schema/mule/covid-19data-tracking-api" xmlns:servicenow="http://www.mulesoft.org/schema/mule/servicenow"
+	xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets"
+	xmlns:twilio="http://www.mulesoft.org/schema/mule/twilio" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/twilio http://www.mulesoft.org/schema/mule/twilio/current/mule-twilio.xsd
+http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd
+http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mule/servicenow/current/mule-servicenow.xsd
+http://www.mulesoft.org/schema/mule/covid-19data-tracking-api http://www.mulesoft.org/schema/mule/covid-19data-tracking-api/current/mule-covid-19data-tracking-api.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="378176ca-a4e3-4401-b251-edcd546a06e9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="d3333315-ab5b-4026-abfc-b17297fc0ab3" >
+		<email:smtps-connection host="smtp.gmail.com" user="anujbhargav3@gmail.com" password="dnmudzaaennghday">
+			<tls:context >
+				<tls:trust-store insecure="true" />
+			</tls:context>
+		</email:smtps-connection>
+	</email:smtp-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="bee67ca7-4019-438c-b88f-fc0b80d1de43" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="feedback" />
+	</db:config>
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="9f7967cc-c316-4265-8793-6ad55c1d370c" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="hack" />
+	</db:config>
+	<db:config name="Database_Config2" doc:name="Database Config" doc:id="02a3ae69-6670-4283-a931-62165950b6ae" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="feedback" />
+	</db:config>
+	<db:config name="Database_Config3" doc:name="Database Config" doc:id="20bffed1-b672-4d39-9955-d27bade4e8c3" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="hack" />
+	</db:config>
+	<db:config name="Database_Config4" doc:name="Database Config" doc:id="43233ce9-56d9-4457-8629-0c1600b88b57" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="hack" />
+	</db:config>
+	<db:config name="Database_Config5" doc:name="Database Config" doc:id="94770ce6-a127-4796-a671-1c7974dd35eb" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="hack" />
+	</db:config>
+	<flow name="FrontPage" doc:id="19ae6dda-4815-49c4-86f6-664d10dd9f34" >
+		<http:listener doc:name="doctor" doc:id="c0469e2e-b580-40b7-86ad-18d445a6f9a9" config-ref="HTTP_Listener_config" path="/doctor"/>
+		<parse-template doc:name="Parse Template" doc:id="dd9a7c1b-ade5-476f-af21-8e5b3589ca6c">
+			<content >&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;style&gt;
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #FF0000;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+.column {
+  float: left;
+  width: 33.3%;
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  margin: 8px;
+}
+
+.about-section {
+  padding: 50px;
+  text-align: center;
+  background-color: #474e5d;
+  color: white;
+}
+
+.container {
+  padding: 0 16px;
+}
+
+.container::after, .row::after {
+  content: &quot;&quot;;
+  clear: both;
+  display: table;
+}
+
+.title {
+  color: grey;
+}
+
+.button {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+}
+footer {
+  text-align: center;
+  padding: 5px;
+  margin: 40px;
+  background-color: lightblue;
+  color: white;
+}
+
+.button:hover {
+  background-color: #555;
+}
+
+@media screen and (max-width: 650px) {
+  .column {
+    width: 100%;
+    display: block;
+  }
+}
+
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body background=
+https://uploads-ssl.webflow.com/5c8824c3590eda44d6490dcf/5ea2ec77a6d93b42dc34697f_Healthcare-and-eCommerce-Trends-to-Watch-in-2020.jpg&gt;&gt;
+&lt;marquee scrollamount=&quot;20&quot; width=&quot;100%&quot; direction=&quot;left&quot; height=&quot;500%&quot;&gt;
+     Stay Home !! Stay Safe !!
+&lt;/marquee&gt;&lt;/br&gt;
+&lt;h2&gt;Doctor Appointment &lt;/h2&gt;
+&lt;button onclick=&quot;document.getElementById('id01').style.display='block'&quot; style=&quot;width:auto;&quot;&gt;Book Appointment&lt;/button&gt;
+
+&lt;div id=&quot;id01&quot; class=&quot;modal&quot;&gt;
+  
+  &lt;form class=&quot;modal-content animate&quot; action=&quot;/inside&quot; method=&quot;post&quot;&gt;
+    &lt;div class=&quot;imgcontainer&quot;&gt;
+
+      &lt;img src=&quot;https://medics.themechampion.com/html/display/medics-top.jpg&quot; alt=&quot;Avatar&quot; class=&quot;avatar&quot;&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;container&quot;&gt;
+      &lt;label for=&quot;uname&quot;&gt;&lt;b&gt;Patient Name&lt;/b&gt;&lt;/label&gt;
+      &lt;input type=&quot;text&quot; placeholder=&quot;Patient Name&quot; name=&quot;Name&quot; required&gt;
+
+      &lt;label for=&quot;psw&quot;&gt;&lt;b&gt;Age&lt;/b&gt;&lt;/label&gt;
+      &lt;input type=&quot;text&quot; placeholder=&quot;Age&quot; name=&quot;Age&quot; required&gt;
+
+       &lt;label for=&quot;uname&quot;&gt;&lt;b&gt;Email&lt;/b&gt;&lt;/label&gt;
+      &lt;input type=&quot;text&quot; placeholder=&quot;Email&quot; name=&quot;Email&quot; required&gt;
+
+       &lt;label for=&quot;uname&quot;&gt;&lt;b&gt;Phone Number&lt;/b&gt;&lt;/label&gt;
+      &lt;input type=&quot;text&quot; placeholder=&quot;Phone Number&quot; name=&quot;Phone&quot; required&gt;
+      
+      &lt;label for=&quot;uname&quot;&gt;&lt;b&gt;Appointment Date:&lt;/b&gt;&lt;/label&gt;
+      &lt;input type=&quot;date&quot; placeholder=&quot;Date&quot; name=&quot;Date&quot; required&gt;
+      
+      &lt;label for=&quot;appt&quot;&gt;&lt;b&gt;Select appointment time:&lt;/b&gt;&lt;/label&gt;
+      &lt;input type=&quot;time&quot; id=&quot;time&quot; name=&quot;time&quot; required&gt;
+
+      &lt;button onclick=&quot;myFunction7()&quot; style=&quot;background-color:#008000&quot;&gt;Submit&lt;/button&gt;
+
+     &lt;script&gt;
+    function myFunction7() {
+     alert(&quot;Please pay the appointment fees with token number sent on the email&quot;);
+    }
+  &lt;/script&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;container&quot; style=&quot;background-color:#f1f1f1&quot;&gt;
+      &lt;button type=&quot;button&quot; onclick=&quot;document.getElementById('id01').style.display='none'&quot; class=&quot;cancelbtn&quot;&gt;Cancel&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+&lt;/div&gt;
+&lt;button onclick=&quot;document.getElementById('id02').style.display='block'&quot; style=&quot;width:auto;&quot;&gt;About us&lt;/button&gt;
+
+&lt;div id=&quot;id02&quot; class=&quot;modal&quot;&gt;
+  
+  &lt;form class=&quot;modal-content animate&quot; action=&quot;/aboutus&quot; method=&quot;post&quot;&gt;
+
+      &lt;div class=&quot;about-section&quot;&gt;
+  &lt;h1&gt;Doctors&lt;/h1&gt; 
+&lt;/div&gt;
+
+&lt;h2 style=&quot;text-align:center&quot;&gt;Our Team&lt;/h2&gt;
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;column&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;img src=&quot;https://th.bing.com/th/id/OIP.cKgLEoLgzgCAaAoAOBCKkgEsDI?pid=ImgDet&amp;rs=1&quot; style=&quot;width:100%&quot;&gt;
+      &lt;div class=&quot;container&quot;&gt;
+        &lt;h2&gt;Dr.Jane Doe&lt;/h2&gt;
+        &lt;p class=&quot;title&quot;&gt;Heart Specialist&lt;/p&gt;
+        &lt;p&gt;Email -jane@example.com&lt;/p&gt;
+        &lt;p&gt;Doctors who specialize in the diagnosis and treatment of conditions or diseases of the cardiovascular system. These specialists are trained to identify, treat, and help prevent heart issues.&lt;/p&gt;
+        
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;column&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;img src=&quot;https://media.istockphoto.com/photos/portrait-of-doctor-standing-with-arms-crossed-picture-id188105571?k=6&amp;m=188105571&amp;s=612x612&amp;w=0&amp;h=PJvNCxiJGdnFxOvfmZM4q2_V-tV5CEUvJMknTM9CFXU=&quot; alt=&quot;Mike&quot; style=&quot;width:100%&quot;&gt;
+      &lt;div class=&quot;container&quot;&gt;
+        &lt;h2&gt;Dr.Mike Ross&lt;/h2&gt;
+        &lt;p class=&quot;title&quot;&gt;Orthopedic Surgeon&lt;/p&gt;
+        &lt;p&gt;Email -MikeRoss@example.com&lt;/p&gt;
+        &lt;p&gt;Orthopedics is the medical field devoted to treating these areas. An orthopedic surgeon or orthopedic doctor (also called an orthopedist) is a doctor who specializes in this field. &lt;/p&gt;
+     
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;div class=&quot;column&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;img src=&quot;https://media.istockphoto.com/photos/portrait-of-a-doctor-picture-id92347287?k=6&amp;m=92347287&amp;s=612x612&amp;w=0&amp;h=URJcB3uKHzlWq42b5UjoA2bd8hPI8B1RLI8ZIpUMsRc=&quot; alt=&quot;John&quot; style=&quot;width:100%&quot;&gt;
+      &lt;div class=&quot;container&quot;&gt;
+        &lt;h2&gt;Dr.John Starc&lt;/h2&gt;
+        &lt;p class=&quot;title&quot;&gt;Neurologist&lt;/p&gt;
+        &lt;p&gt;Email -john@example.com&lt;/p&gt;
+        &lt;p&gt;Neurologists are medical professionals who specialize in diagnosing and treating conditions that affect the nervous system.&lt;/p&gt;
+        
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+   &lt;div class=&quot;container&quot; style=&quot;background-color:#f1f1f1&quot;&gt;
+      &lt;button type=&quot;button&quot; onclick=&quot;document.getElementById('id02').style.display='none'&quot; class=&quot;cancelbtn&quot;&gt;Cancel&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+&lt;/div&gt;
+
+
+&lt;button onclick=&quot;document.getElementById('id03').style.display='block'&quot; style=&quot;width:auto;&quot;&gt;Feedback Form&lt;/button&gt;
+
+&lt;div id=&quot;id03&quot; class=&quot;modal&quot;&gt;
+  
+  &lt;form class=&quot;modal-content animate&quot; action=&quot;/Feedback&quot; method=&quot;post&quot;&gt;
+  &lt;div class=&quot;imgcontainer&quot;&gt;
+      
+      &lt;img src=&quot;https://res.cloudinary.com/crunchbase-production/image/upload/v1412196882/ny8zayuhlcidyj9euzhk.png&quot; alt=&quot;Avatar&quot; class=&quot;avatar&quot;&gt;
+    &lt;/div&gt;
+&lt;/style&gt;    
+&lt;/head&gt;    
+&lt;body&gt;
+
+&lt;div class=&quot;container&quot;&gt;    
+  &lt;form&gt;    
+    &lt;div class=&quot;row&quot;&gt;    
+      &lt;div class=&quot;col-25&quot;&gt;    
+        &lt;label for=&quot;fname&quot;&gt;First Name&lt;/label&gt;    
+      &lt;/div&gt;    
+      &lt;div class=&quot;col-75&quot;&gt;    
+        &lt;input type=&quot;text&quot; id=&quot;fname&quot; name=&quot;FirstName&quot; placeholder=&quot;Your name..&quot; required&gt;    
+      &lt;/div&gt;    
+    &lt;/div&gt;    
+    &lt;div class=&quot;row&quot;&gt;    
+      &lt;div class=&quot;col-25&quot;&gt;    
+        &lt;label for=&quot;lname&quot;&gt;Last Name&lt;/label&gt;    
+      &lt;/div&gt;    
+      &lt;div class=&quot;col-75&quot;&gt;    
+        &lt;input type=&quot;text&quot; id=&quot;lname&quot; name=&quot;LastName&quot; placeholder=&quot;Your last name..&quot; required&gt;    
+      &lt;/div&gt;    
+    &lt;/div&gt;    
+    &lt;div class=&quot;row&quot;&gt;    
+        &lt;div class=&quot;col-25&quot;&gt;    
+          &lt;label for=&quot;email&quot;&gt;Mail Id&lt;/label&gt;    
+        &lt;/div&gt;    
+        &lt;div class=&quot;col-75&quot;&gt;    
+          &lt;input type=&quot;email&quot; id=&quot;email&quot; name=&quot;EmailId&quot; placeholder=&quot;Your mail id..&quot; required&gt;    
+        &lt;/div&gt;    
+      &lt;/div&gt;    
+    &lt;div class=&quot;row&quot;&gt;    
+      &lt;div class=&quot;col-25&quot;&gt;    
+        &lt;label for=&quot;Doctor Name&quot;&gt;Doctor Name&lt;/label&gt;    
+      &lt;/div&gt;    
+      &lt;div class=&quot;col-75&quot;&gt;    
+        &lt;select id=&quot;Doctor Name&quot; name=&quot;DoctorName&quot;&gt;    
+            &lt;option value=&quot;none&quot;&gt;Select Doctor&lt;/option&gt;    
+          &lt;option value=&quot;Jane Doe&quot;&gt;Dr.Jane Doe&lt;/option&gt;    
+          &lt;option value=&quot;Mike Ross&quot;&gt;Dr.Mike Ross&lt;/option&gt;    
+          &lt;option value=&quot;John Starc&quot;&gt;Dr.John Starc&lt;/option&gt;    
+   
+        &lt;/select&gt;    
+      &lt;/div&gt;    
+    &lt;/div&gt;    
+    &lt;div class=&quot;row&quot;&gt;    
+      &lt;div class=&quot;col-25&quot;&gt;    
+        &lt;label for=&quot;feed_back&quot;&gt;Feed Back&lt;/label&gt;    
+      &lt;/div&gt;    
+      &lt;div class=&quot;col-75&quot;&gt;    
+        &lt;textarea id=&quot;subject&quot; name=&quot;FeedBack&quot; placeholder=&quot;Write something..&quot; style=&quot;height:200px&quot;&gt;&lt;/textarea&gt;    
+      &lt;/div&gt;    
+    &lt;/div&gt;    
+    &lt;div class=&quot;row&quot;&gt;    
+      &lt;button onclick=&quot;myFunction1()&quot; style=&quot;background-color:#008000&quot;&gt;Submit&lt;/button&gt;
+
+     &lt;script&gt;
+    function myFunction1() {
+     alert(&quot;Thanks for the Feedback !!!&quot;);
+    }
+  &lt;/script&gt;   
+    &lt;/div&gt;    
+   &lt;div class=&quot;container&quot; style=&quot;background-color:#f1f1f1&quot;&gt;
+      &lt;button type=&quot;button&quot; onclick=&quot;document.getElementById('id03').style.display='none'&quot; class=&quot;cancelbtn&quot;&gt;Cancel&lt;/button&gt;
+    &lt;/div&gt;  
+  &lt;/form&gt;
+&lt;/div&gt;
+  &lt;/form&gt;    
+&lt;/div&gt;
+&lt;button onclick=&quot;document.getElementById('id05').style.display='block'&quot; style=&quot;width:auto;&quot;&gt;Pay Appointment Fees&lt;/button&gt;
+&lt;div id=&quot;id05&quot; class=&quot;modal&quot;&gt;
+  
+  &lt;form class=&quot;modal-content animate&quot; action=&quot;/pay&quot; method=&quot;post&quot;&gt;
+&lt;div class=&quot;imgcontainer&quot;&gt;
+      
+      &lt;img src=&quot;https://th.bing.com/th/id/OIP.Ue40NKqi8Lfd0lYYxoblrQHaD4?pid=ImgDet&amp;rs=1&quot; class=&quot;avatar&quot;&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;container&quot;&gt;
+      &lt;label for=&quot;uname&quot;&gt;&lt;b&gt;Token Number(You have received the token Number on email after you book appointment)&lt;/b&gt;&lt;/label&gt;
+      &lt;input type=&quot;text&quot; placeholder=&quot;Token Number&quot; name=&quot;Token&quot; required&gt;
+      &lt;label for=&quot;uname&quot;&gt;&lt;b&gt;Appointment Fees&lt;/b&gt;&lt;/label&gt;
+      &lt;input type=&quot;text&quot; name=&quot;fee&quot; value=&quot;Rs. 500&quot; disabled=&quot;disabled&quot; /&gt;
+      
+      &lt;button onclick=&quot;window.open('https://buy.stripe.com/test_eVa7uW8gLdIsexaaEH')&quot; style=&quot;background-color:#008000&quot;&gt;Submit&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;container&quot; style=&quot;background-color:#f1f1f1&quot;&gt;
+      &lt;button type=&quot;button&quot; onclick=&quot;document.getElementById('id05').style.display='none'&quot; class=&quot;cancelbtn&quot;&gt;Cancel&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+&lt;/div&gt;
+  
+&lt;br&gt;   
+  &lt;marquee scrollamount=&quot;2&quot; width=&quot;10%&quot; direction=&quot;up&quot; height=&quot;500%&quot;&gt;
+      This Application is used to Book doctor's appointment. Book Appointment option is to Book and Email will be sent after booking. About us option is to Know about the doctors in the hospital. Feedback is to give the feed back of a particular doctor.
+&lt;/marquee&gt;&lt;/br&gt;
+
+&lt;script&gt;
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = &quot;none&quot;;
+    }
+}
+&lt;/script&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;footer&gt;
+&lt;form action=&quot;/quick&quot; method=post&gt;  
+  &lt;div class=&quot;container&quot;&gt;  
+  &lt;center&gt;  &lt;h1&gt;QUICK ENQUIRY&lt;/h1&gt; &lt;/center&gt;  
+  &lt;hr&gt;    
+&lt;input type=&quot;text&quot; name=&quot;Name&quot; placeholder= &quot;Name&quot; size=&quot;15&quot; required /&gt;    
+ 
+ &lt;input type=&quot;text&quot; placeholder=&quot;Enter Email&quot; name=&quot;Email&quot; required&gt;  
+
+   &lt;input type=&quot;text&quot; placeholder=&quot;Your Words....&quot; name=&quot;Words&quot; required&gt; 
+    &lt;button type=&quot;submit&quot; class=&quot;registerbtn&quot;&gt;Submit&lt;/button&gt;    
+&lt;/form&gt;  
+&lt;/footer&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</content>
+		</parse-template>
+	</flow>
+	<flow name="Appointment_Email" doc:id="fbe484ff-71e1-41e1-aa92-4ebc307be006" >
+		<http:listener doc:name="Appointment Booking" doc:id="9dc4ff0a-d354-4786-ac5c-5b6e233a3cb1" config-ref="HTTP_Listener_config" path="/inside"/>
+		<ee:transform doc:name="Transform Message" doc:id="c31273fa-c514-4b22-b23d-2725f718414c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+		<email:send doc:name="Send" doc:id="62cce2cc-b25a-4856-9900-ec0a505bd475" config-ref="Email_SMTP" fromAddress='#["anujbhargav3@gmail.com"]' subject='#[payload.Age ++ payload.Phone ++ " Token Number for Appointment"]'>
+			<email:to-addresses>
+				<email:to-address value="#[payload.Email]" />
+			</email:to-addresses>
+			<email:body contentType="text/plain" encoding="UTF-8">
+				<email:content><![CDATA[#[output application/dw
+---
+{
+	PatientName: payload.Name,
+	PatientAge: payload.Age ,
+	AppointmentDate:payload.Date,
+	AppointmentTime:payload.time,
+	TokenNumber :payload.Age ++ payload.Phone 
+}]]]></email:content>
+			</email:body>
+		</email:send>
+		<db:insert doc:name="Insert" doc:id="a896ca83-b19e-4f9c-bd39-a019f601be46" config-ref="Database_Config1">
+			<db:sql ><![CDATA[Insert into hack.doctor(PatientName,PatientAge,Email,PhoneNumber,AppointmentDate,AppointmentTime,TokenNumber) Values (:p,:a,:e,:n,:d,:t,:k) ;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{p:payload.Name,a:payload.Age,e:payload.Email,n:payload.Phone,d:payload.Date,t:payload.time,k:payload.Age ++ payload.Phone}]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="Logger" doc:id="26b4d927-ec9e-4bb0-aed8-eeead268ed29" message="Email sent"/>
+	</flow>
+	<flow name="Payment_db" doc:id="deab0d47-84c9-45a8-b0cd-5879e158f435" >
+		<http:listener doc:name="Listener" doc:id="dd8bd76d-ac27-4357-a803-be6b9a2f20b6" config-ref="HTTP_Listener_config" path="/pay"/>
+		<ee:transform doc:name="Transform Message" doc:id="53f991d0-1e0e-44b2-ae49-7ca05ed18ea7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert" doc:id="d29e9f4d-1f8c-4db0-8527-ee8cf15d10ea" config-ref="Database_Config3">
+			<db:sql><![CDATA[Insert into hack.payment(TokenNumber) Values(:t)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{t:payload.Token,i:payload.UPI}]]]></db:input-parameters>
+		</db:insert>
+	</flow>
+	<flow name="Enquiry_db" doc:id="bf846201-699f-4d62-bed2-ff81b31323f9" >
+		<http:listener doc:name="Listener" doc:id="f2e9dca5-d2e1-42b0-926a-954fb4304c51" config-ref="HTTP_Listener_config" path="/quick"/>
+		<ee:transform doc:name="Transform Message" doc:id="8b80a870-0009-497f-953a-d6c93e84a631" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert" doc:id="07d6a9e4-274a-48c2-a873-d0ddd2d8d3d8" config-ref="Database_Config2">
+			<db:sql ><![CDATA[INSERT INTO feedback.quick (Name,Email,Words) VALUES (:n,:e,:w);]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{n:payload.Name ,e:payload.Email,w:payload.Words}]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="Logger" doc:id="09fc70db-3dca-4a21-b068-bd4c61968cf1" message="Enquiry added in database"/>
+	</flow>
+	<flow name="Feedback_db" doc:id="c2c9d0ef-1ed4-49ea-9264-fad6eea1e238" >
+		<http:listener doc:name="Feedback" doc:id="e2b0b42f-dc58-4eba-9d40-41ef75dde807" config-ref="HTTP_Listener_config" path="/Feedback"/>
+		<ee:transform doc:name="Transform Message" doc:id="d6cd8368-eca9-44bb-8f2a-c1c5d314ecd4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert" doc:id="3265d8ff-5272-4745-ba78-3afc9f2e4358" config-ref="Database_Config">
+			<db:sql ><![CDATA[Insert into feedback.feedback(FirstName,LastName,Email,DoctorName,FeedBack) Values (:p,:a,:e,:d,:t) ;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{p:payload.FirstName,a:payload.LastName,e:payload.EmailId,d:payload.DoctorName,t:payload.FeedBack}]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="Logger" doc:id="62988cfd-fc5d-4f70-99d3-d001bd676101" message="Feedback added to database"/>
+	</flow>
+</mule>
