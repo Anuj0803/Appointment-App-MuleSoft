@@ -17,29 +17,29 @@ http://www.mulesoft.org/schema/mule/covid-19data-tracking-api http://www.mulesof
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
 	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="d3333315-ab5b-4026-abfc-b17297fc0ab3" >
-		<email:smtps-connection host="smtp.gmail.com" user="anujbhargav3@gmail.com" password="dnmudzaaennghday">
+		<email:smtps-connection host="smtp.gmail.com" user="#Your Email ID" password="#Your Password">
 			<tls:context >
 				<tls:trust-store insecure="true" />
 			</tls:context>
 		</email:smtps-connection>
 	</email:smtp-config>
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="bee67ca7-4019-438c-b88f-fc0b80d1de43" >
-		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="feedback" />
+		<db:my-sql-connection host="localhost" port="3306" user="#Your username" password="#Your password" database="feedback" />
 	</db:config>
 	<db:config name="Database_Config1" doc:name="Database Config" doc:id="9f7967cc-c316-4265-8793-6ad55c1d370c" >
-		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="hack" />
+		<db:my-sql-connection host="localhost" port="3306" user="#Your username" password="#Your password" database="hack" />
 	</db:config>
 	<db:config name="Database_Config2" doc:name="Database Config" doc:id="02a3ae69-6670-4283-a931-62165950b6ae" >
-		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="feedback" />
+		<db:my-sql-connection host="localhost" port="3306" user="#Your username" password="#Your password" database="feedback" />
 	</db:config>
 	<db:config name="Database_Config3" doc:name="Database Config" doc:id="20bffed1-b672-4d39-9955-d27bade4e8c3" >
-		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="hack" />
+		<db:my-sql-connection host="localhost" port="3306" user="#Your username" password="#Your password" database="hack" />
 	</db:config>
 	<db:config name="Database_Config4" doc:name="Database Config" doc:id="43233ce9-56d9-4457-8629-0c1600b88b57" >
-		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="hack" />
+		<db:my-sql-connection host="localhost" port="3306" user="#Your username" password="#Your password" database="hack" />
 	</db:config>
 	<db:config name="Database_Config5" doc:name="Database Config" doc:id="94770ce6-a127-4796-a671-1c7974dd35eb" >
-		<db:my-sql-connection host="localhost" port="3306" user="root" password="Navalneeru@51" database="hack" />
+		<db:my-sql-connection host="localhost" port="3306" user="#Your username" password="#Your password" database="hack" />
 	</db:config>
 	<flow name="FrontPage" doc:id="19ae6dda-4815-49c4-86f6-664d10dd9f34" >
 		<http:listener doc:name="doctor" doc:id="c0469e2e-b580-40b7-86ad-18d445a6f9a9" config-ref="HTTP_Listener_config" path="/doctor"/>
@@ -497,7 +497,7 @@ payload]]></ee:set-payload>
 			<ee:variables >
 			</ee:variables>
 		</ee:transform>
-		<email:send doc:name="Send" doc:id="62cce2cc-b25a-4856-9900-ec0a505bd475" config-ref="Email_SMTP" fromAddress='#["anujbhargav3@gmail.com"]' subject='#[payload.Age ++ payload.Phone ++ " Token Number for Appointment"]'>
+		<email:send doc:name="Send" doc:id="62cce2cc-b25a-4856-9900-ec0a505bd475" config-ref="Email_SMTP" fromAddress='#["#Your Email"]' subject='#[payload.Age ++ payload.Phone ++ " Token Number for Appointment"]'>
 			<email:to-addresses>
 				<email:to-address value="#[payload.Email]" />
 			</email:to-addresses>
